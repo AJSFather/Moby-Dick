@@ -3,6 +3,7 @@ import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from nltk import pos_tag
+from nltk.stem import WordNetLemmatizer
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('averaged_perceptron_tagger_eng')
@@ -16,6 +17,8 @@ file.close()
 clean_text = re.sub(r'\d+', "", text_from_file)
 clean_text = re.sub(r'\s+', " ", clean_text)
 clean_text = re.sub(r'[^a-zA-Z0-9. ]', "", clean_text)
+clean_text = re.sub(r'\.{2}', '.', clean_text)
+# clean_text = re.sub(r'')
   
 
 moby_dick_tokenized = sent_tokenize(clean_text)
