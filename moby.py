@@ -4,6 +4,7 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from nltk import pos_tag
 from nltk.stem import WordNetLemmatizer
+from nltk.chunk import RegexpParser
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('averaged_perceptron_tagger_eng')
@@ -18,18 +19,30 @@ clean_text = re.sub(r'\d+', "", text_from_file)
 clean_text = re.sub(r'\s+', " ", clean_text)
 clean_text = re.sub(r'[^a-zA-Z0-9. ]', "", clean_text)
 clean_text = re.sub(r'\.{2}', '.', clean_text)
-# clean_text = re.sub(r'')
-  
 
 moby_dick_tokenized = sent_tokenize(clean_text)
-print(moby_dick_tokenized[:2])
+# print(moby_dick_tokenized[:2])
 words = word_tokenize(clean_text)
 tagged = pos_tag(words)
+
+lemma = WordNetLemmatizer.lemmatize(words, pos='')
 
 stop_words = set(stopwords.words("english"))
 stopwords_removed = [word for word in words if word.lower() not in stop_words]
 
-print(tagged)
+chunk_grammar = r"""
+  NP: {<DT>?<JJ.*>*<NN.*>+}         # Noun Phrases
+  PP: {<IN><NP>}                    # Prepositional Phrases
+  VP: {<VB.*><NP|PP|CLAUSE>*}       # Verb Phrases
+  ADJP: {<RB.*>*<JJ.*>}             # Adjective Phrases
+  ADVP: {<RB.*>+}                   # Adverb Phrases
+"""
+parser = RegexpParser(chunk_grammar)
+chunked_tree = parser.parse(tagged)
+
+
+# print(tagged)
+chunked_tree.pretty_print()
 
 
 
